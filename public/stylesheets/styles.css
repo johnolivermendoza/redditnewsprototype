@@ -1,0 +1,24 @@
+.news-container {
+  padding: 20px;
+}
+
+.delete-btn {
+	position: absolute;
+}
+
+.post-content {
+  padding: 2px;
+}
+.new-post-form {
+  margin-top: 20px;
+}
+.new-post-form input {
+  display: block;
+}
+.new-post-form button {
+  margin-top: 20px;
+}
+
+post-container {
+	width: 100%;
+}

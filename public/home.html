@@ -1,0 +1,48 @@
+<div class="news-container">
+    <div class="page-header">
+        <h1>Reddit Mock-up Prototype</h1>
+    </div>
+
+    <div class="post-container table-responsive">
+        <table class="table table-hover">
+            <tr>
+                <th><a href="" ng-click="reverse=!reverse; order('upvotes', reverse)">Votes</a>
+                <th><a href="" ng-click="reverse=!reverse; order('title', reverse)">Title</a></th>
+                <th><a href="" ng-click="reverse=!reverse; order('comments.length',reverse)">Comments</a></th>
+            </tr>
+            <tr ng-repeat="post in posts" ng-mouseover="deleteBtn = true" ng-mouseleave="deleteBtn = false">
+                <td>
+                    {{post.upvotes}}
+                    <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>
+                </td>
+                <td>
+                    <a ng-show="post.link" href="{{ post.link }}">
+                        {{post.title}}
+                    </a>
+                    <span ng-hide="post.link">
+                        {{post.title}}
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        {{post.comments.length}}
+                        <a href="#/posts/{{post._id}}">Comment(s)</a>
+                    </span>
+                </td>
+                <td>
+                    <div class="delete-btn">
+                        <a href="" class="glyphicon glyphicon-remove" ng-show="deleteBtn" ng-click="removePost(post)"></a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <form class="new-post-form form-group" ng-submit="addPost()">
+            <input class="form-control" type="text" placeholder="Title" ng-model="title"></input><br>
+            <input class="form-control" type="text" placeholder="Link" ng-model="link"></input>
+            <button class="btn btn-default" type="submit">Post</button>
+        </form>
+    </div>
+    
+</div>
