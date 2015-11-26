@@ -28,7 +28,7 @@ mongoose.connect('mongodb://localhost/news');
 
 
 // For User PW Authentication and Security
-var crypto = require('crypto');
+//var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
 require('./config/passport');

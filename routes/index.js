@@ -154,6 +154,7 @@ router.post('/register', function(req, res, next){
 		return res.status(400).json({message: 'Please fill out all fields'});
 	}
 
+	
 	var user = new User();
 
 	user.username = req.body.username;
@@ -161,8 +162,15 @@ router.post('/register', function(req, res, next){
 	user.setPassword(req.body.password)
 
 	user.save(function (err){
-		if(err){ return next(err); }
+		if(err){ 
+			if (err.code == '11000') {
+				res.status(400).json({message: 'This account name already exists'});
+			}
+			
 
+			return next(err); 
+		}
+//E11000 duplicate key error index
 		return res.json({token: user.generateJWT()})
 	});
 });

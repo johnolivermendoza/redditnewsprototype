@@ -106,9 +106,10 @@ app.factory('posts', ['$http', 'authService', function($http, authService) {
 
 
 
-app.controller('MainCtrl', ['$scope', 'posts', '$filter', function($scope, posts, $filter) {
+app.controller('MainCtrl', ['$scope', 'posts', '$filter', 'authService', function($scope, posts, $filter, authService) {
 	$scope.test = 'Hello world!';
 	$scope.posts = posts.posts;
+	$scope.isLoggedIn = authService.isLoggedIn;
 
 	$scope.addPost = function() {
 		if(!$scope.title || $scope.title === '') {
@@ -146,8 +147,9 @@ app.controller('MainCtrl', ['$scope', 'posts', '$filter', function($scope, posts
 }]);
 
 
-app.controller('PostsCtrl', ['$scope', 'posts', 'post', function($scope, posts, post) {
+app.controller('PostsCtrl', ['$scope', 'posts', 'post', 'authService', function($scope, posts, post, authService) {
 	$scope.post = post;
+	$scope.isLoggedIn = authService.isLoggedIn;
 
 	$scope.addComment = function(){
 		if($scope.body === '') { return; }
