@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-//var favicon = require('serve-favicon');
+var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -21,7 +21,10 @@ mongoose.connection.on('error', function (err) {
   console.log(err);
 });*/
 
-mongoose.connect('mongodb://localhost/news');
+
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/news');
+//mongoose.connect('mongodb://localhost/news');
+
 
 // ************* End Mongoose Stuff *******************
 
@@ -55,6 +58,10 @@ app.use('/', routes);
 app.use('/users', users);
 app.use(passport.initialize());
 
+
+app.listen(app.get('port'), function() {
+  console.log('****** Node app is running on port: ', app.get('port'));
+});
 
 
 

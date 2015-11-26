@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/johnolivermendoza/redditnewsprototype.git"
+    "url": "git+https://github.com/johnolivermendoza/redditnewsprototype.git"
   },
   "keywords": [
     "node",
@@ -28,5 +28,13 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "serve-favicon": "~2.3.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/johnolivermendoza/redditnewsprototype/issues"
+  },
+  "homepage": "https://github.com/johnolivermendoza/redditnewsprototype#readme",
+  "main": "app.js",
+  "devDependencies": {},
+  "author": "John Oliver Mendoza",
+  "license": "ISC"
 }
