@@ -99,10 +99,15 @@ app.use(function(err, req, res, next) {
   });
 });
 
+
+/*
 // Live Reload Code
 livereload = require('livereload');
 server = livereload.createServer();
 server.watch(__dirname + "/public");
+
+*/
+
 
 module.exports = app;
 
