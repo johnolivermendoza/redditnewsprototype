@@ -76,7 +76,7 @@ router.put('/posts/:post/upvote', auth, function(req, res, next) {
 	});
 });
 
-router.delete('/posts/:post/remove', auth, function(req, res, next) {
+router.delete('/posts/:post/remove', function(req, res, next) {
 	Post.remove({ _id: req.post.id }, function(err) {
     	if (err) { return next(err); }
 
@@ -86,7 +86,7 @@ router.delete('/posts/:post/remove', auth, function(req, res, next) {
 
 
 // Gets all comments for that specific post
-router.get('/posts/:post/comments', auth, function(req, res, next) {
+router.get('/posts/:post/comments', function(req, res, next) {
 	var query = Comment.find({post: req.post.id});
 	query.exec(function(err, comments){
 		if(err){ return next(err); }

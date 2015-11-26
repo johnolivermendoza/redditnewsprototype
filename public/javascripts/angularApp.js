@@ -27,8 +27,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 			url: '/login',
 			templateUrl: '/login.html',
 			controller: 'AuthCtrl',
-			onEnter: ['$state', 'auth', function($state, auth){
-				if(auth.isLoggedIn()){
+			onEnter: ['$state', 'authService', function($state, authService){
+				if(authService.isLoggedIn()){
 					$state.go('home');
 				}
 			}]
@@ -37,8 +37,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 			url: '/register',
 			templateUrl: '/register.html',
 			controller: 'AuthCtrl',
-			onEnter: ['$state', 'auth', function($state, auth){
-				if(auth.isLoggedIn()){
+			onEnter: ['$state', 'authService', function($state, authService){
+				if(authService.isLoggedIn()){
 					$state.go('home');
 				}
 			}]
@@ -49,7 +49,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 }]);
 
 
-app.factory('posts', ['$http', function($http) {
+app.factory('posts', ['$http', 'authService', function($http, authService) {
 	var o = {
 		// initialize the posts as empty
 		posts: []
@@ -72,27 +72,33 @@ app.factory('posts', ['$http', function($http) {
 	};
 
 	o.create = function(post) {
-		return $http.post('posts', post).success(function(data) {
+		return $http.post('/posts', post, {
+			headers: {Authorization: 'Bearer '+authService.getToken()}
+		}).success(function(data){
 			o.posts.push(data);
-		})
+		});
 	};
 
 	o.upvote = function(post) {
-		return $http.put('/posts/' + post._id + '/upvote')
-			.success(function(data) {
-				post.upvotes += 1;
-			});
+		return $http.put('/posts/' + post._id + '/upvote', null, {
+			headers: {Authorization: 'Bearer '+authService.getToken()}
+		}).success(function(data){
+			post.upvotes += 1;
+		});
 	};
 
 	o.addComment = function(id, comment) {
-		return $http.post('/posts/' + id + '/comments', comment);
+		return $http.post('/posts/' + id + '/comments', comment, {
+			headers: {Authorization: 'Bearer '+authService.getToken()}
+		});
 	};
 
 	o.upvoteComment = function(post, comment) {
-		return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote')
-			.success(function(data){
-				comment.upvotes += 1;
-			});
+		return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/upvote', null, {
+			headers: {Authorization: 'Bearer '+authService.getToken()}
+		}).success(function(data){
+			comment.upvotes += 1;
+		});
 	};
 
 	return o;
@@ -162,27 +168,27 @@ app.controller('PostsCtrl', ['$scope', 'posts', 'post', function($scope, posts, 
 }]);
 
 
-/*app.controller('NavCtrl', ['$scope','auth', function($scope, auth) {
-	$scope.isLoggedIn = auth.isLoggedIn;
-	$scope.currentUser = auth.currentUser;
-	$scope.logOut = auth.logOut;
-}]);  */
+app.controller('NavCtrl', ['$scope','authService', function($scope, authService) {
+	$scope.isLoggedIn = authService.isLoggedIn;
+	$scope.currentUser = authService.currentUser;
+	$scope.logOut = authService.logOut;
+}]);  
 
 
 
-app.factory('auth', ['$http', '$window', function($http, $window) {
-	var auth = {};
+app.factory('authService', ['$http', '$window', function($http, $window) {
+	var authService = {};
 
-	auth.saveToken = function (token){
+	authService.saveToken = function (token){
 		$window.localStorage['flapper-news-token'] = token;
 	};
 
-	auth.getToken = function (){
+	authService.getToken = function (){
 		return $window.localStorage['flapper-news-token'];
 	};
 
-	auth.isLoggedIn = function(){
-		var token = auth.getToken();
+	authService.isLoggedIn = function(){
+		var token = authService.getToken();
 
 		if(token){
 			var payload = JSON.parse($window.atob(token.split('.')[1]));
@@ -193,38 +199,40 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
 		}
 	};
 
-	auth.currentUser = function(){
-		if(auth.isLoggedIn()){
-			var token = auth.getToken();
+	authService.currentUser = function(){
+		if(authService.isLoggedIn()){
+			var token = authService.getToken();
 			var payload = JSON.parse($window.atob(token.split('.')[1]));
 
 			return payload.username;
 		}
 	};
 
-	auth.register = function(user){
+	authService.register = function(user){
 		return $http.post('/register', user).success(function(data){
-			auth.saveToken(data.token);
+			authService.saveToken(data.token);
 		});
 	};
 
-	auth.logIn = function(user){
+	authService.logIn = function(user){
 		return $http.post('/login', user).success(function(data){
-			auth.saveToken(data.token);
+			authService.saveToken(data.token);
 		});
 	};
 
-	auth.logOut = function(){
+	authService.logOut = function(){
 		$window.localStorage.removeItem('flapper-news-token');
 	};
+
+	return authService;
 }]);
 
 
-app.controller('AuthCtrl', ['$scope', '$state', 'auth', function($scope, $state, auth) {
+app.controller('AuthCtrl', ['$scope', '$state', 'authService', function($scope, $state, authService) {
 	$scope.user = {};
 
 	$scope.register = function(){
-		auth.register($scope.user).error(function(error){
+		authService.register($scope.user).error(function(error){
 			$scope.error = error;
 		}).then(function(){
 			$state.go('home');
@@ -232,7 +240,7 @@ app.controller('AuthCtrl', ['$scope', '$state', 'auth', function($scope, $state,
 	};
 
 	$scope.logIn = function(){
-		auth.logIn($scope.user).error(function(error){
+		authService.logIn($scope.user).error(function(error){
 			$scope.error = error;
 		}).then(function(){
 			$state.go('home');
